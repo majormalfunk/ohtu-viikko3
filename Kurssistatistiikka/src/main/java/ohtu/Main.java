@@ -1,8 +1,14 @@
 package ohtu;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import java.io.IOException;
 import org.apache.http.client.fluent.Request;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class Main {
 
@@ -21,6 +27,9 @@ public class Main {
         System.out.println("");
         
         for (Course course : courses) {
+            
+            String stats = getCourseStats(course.getName());
+            
             System.out.println("");
             System.out.println(course.toString());
             System.out.println("");
@@ -42,6 +51,8 @@ public class Main {
             }
             System.out.println("");
             System.out.println("Yhteensä: " + doneTotal + "/" + exercisesTotal + " tehtävää " + hoursTotal + " tuntia");
+            System.out.println("");
+            System.out.println(stats);
         }
         
 
@@ -65,11 +76,37 @@ public class Main {
         String url = "https://studies.cs.helsinki.fi/courses/courseinfo";
         String bodyText = Request.Get(url).execute().returnContent().asString();
 
-        System.out.println("Kurssit: json-muotoinen data:");
-        System.out.println( bodyText );
+        //System.out.println("Kurssit: json-muotoinen data:");
+        //System.out.println( bodyText );
 
         Gson mapper = new Gson();
         return mapper.fromJson(bodyText, Course[].class);
     }
 
+    private static String getCourseStats(String course) throws IOException {
+        
+        String url = "https://studies.cs.helsinki.fi/courses/" + course + "/stats";
+        String statsResponse = Request.Get(url).execute().returnContent().asString();
+
+        JsonParser parser = new JsonParser();
+        JsonObject parsedResponse = parser.parse(statsResponse).getAsJsonObject();
+        int rows = parsedResponse.size();
+        int students = 0;
+        int hours = 0;
+        int exercises = 0;
+        for (int i = 1; i <= rows; i++) {
+            JsonObject row = parsedResponse.getAsJsonObject("" + i);
+            students += row.get("students").getAsInt();
+            hours += row.get("hour_total").getAsInt();
+            exercises += row.get("exercise_total").getAsInt();
+            //Set<Entry<String, JsonElement>> set = row.entrySet();
+            //for (Entry<String, JsonElement> entry : set) {
+            //    System.out.println("E:" + entry.getKey() + " JE: " + entry.getValue().toString());
+            //}
+        }
+        
+        return "kurssilla yhteensä " + students + " palatusta, palautettuja tehtäviä " + exercises + " kpl, aikaa käytetty yhteensä " + hours + " tuntia";
+        
+    }
+    
 }

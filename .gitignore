@@ -16,3 +16,10 @@ gradle-app.setting
 /Kurssistatistiikka/build/
 /Kurssistatistiikka/bin/
 
+/HelloCucumber/.nb-gradle/
+/HelloCucumber/build/
+/HelloCucumber/bin/
+/LoginCucumber/.nb-gradle/
+/LoginCucumber/build/
+/LoginCucumber/bin/
+

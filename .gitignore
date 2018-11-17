@@ -23,3 +23,7 @@ gradle-app.setting
 /LoginCucumber/build/
 /LoginCucumber/bin/
 
+/WebLogin/.nb-gradle/
+/WebLogin/build/
+/WebLogin/bin/
+
